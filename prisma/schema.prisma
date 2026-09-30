@@ -1,0 +1,77 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Paket {
+  id          Int     @id @default(autoincrement())
+  nama        String
+  harga       Int
+  durasiMenit Int
+  deskripsi   String?
+}
+
+model Addon {
+  id    Int    @id @default(autoincrement())
+  nama  String
+  harga Int
+}
+
+model Fotografer {
+  id   Int    @id @default(autoincrement())
+  nama String
+  noHp String
+}
+
+model Ruangan {
+  id        Int    @id @default(autoincrement())
+  nama      String
+  kapasitas Int
+}
+
+model Booking {
+  id              Int           @id @default(autoincrement())
+  paketId         Int
+  fotograferId    Int
+  ruanganId       Int
+  klienNama       String
+  klienWa         String
+  tanggal         String
+  jamMulai        String
+  jamSelesai      String
+  addons          String        @default("[]")
+  totalHarga      Int
+  status          String        @default("terjadwal")
+  statusBayar     String        @default("belum_lunas")
+  galleryPassword String
+  galleryToken    String?
+  createdAt       String
+  fotos           Foto[]
+  uploadTokens    UploadToken[]
+}
+
+model Foto {
+  id         Int     @id @default(autoincrement())
+  bookingId  Int
+  filename   String
+  path       String
+  ukuranKb   Int
+  isFavorit  Boolean @default(false)
+  uploadedAt String
+  booking    Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
+
+model UploadToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  bookingId Int
+  filename  String
+  ukuranKb  Int
+  expiresAt String
+  usedAt    String?
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+}
